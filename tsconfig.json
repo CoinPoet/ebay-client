@@ -15,6 +15,6 @@
         "dist",
         "test",
         "node_modules",
-        ".junk"
+        "junk"
     ]
 }
