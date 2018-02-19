@@ -1,0 +1,20 @@
+{
+    "compilerOptions": {
+        "target": "es6",
+        "module": "commonjs",
+        "sourceMap": false,
+        "inlineSourceMap": true,
+        "declaration": true,
+        "outDir": "dist/cjs",
+        "lib": [
+            "es2015",
+            "esnext.asynciterable"
+        ]
+    },
+    "exclude": [
+        "dist",
+        "test",
+        "node_modules",
+        ".junk"
+    ]
+}

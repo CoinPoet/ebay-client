@@ -1,0 +1,6 @@
+{
+  "baseURL": "https://api.ebay.com",
+  "clientID": "<DO NOT COMMIT THIS>",
+  "clientSecret": "<DO NOT COMMIT THIS>",
+  "redirectUrlName": "<DO NOT COMMIT THIS>"
+}
