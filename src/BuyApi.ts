@@ -3,7 +3,7 @@ import * as BpPromise from 'bluebird'
 import * as request from 'request'
 import * as _ from 'lodash'
 import Diag from './shared/Diag'
-import { ItemSummary, SearchPagedCollection } from './EbayTypes'
+import { ItemSummary, SearchPagedCollection, Item } from './EbayTypes'
 
 const D = new Diag('BuyApi'); // <- NOTE rare case where semicolon is necessary for TSC
 
@@ -154,20 +154,42 @@ export default class BuyApi {
         sep = '&'
       }
     }
-    let path = '/buy/browse/v1/item_summary/search' + qs
     // return result:
-    let nextPageUrl = this.oauthCredentials.baseURL + path
-    D.debug(`search: retrieving nextPageUrl:`, nextPageUrl)
-    let raw = await this.httpRequest('GET', '', nextPageUrl)
+    let path = '/buy/browse/v1/item_summary/search' + qs
+    let requestUrl = this.oauthCredentials.baseURL + path
+    D.debug(`search: retrieving requestUrl:`, requestUrl)
+    let raw = await this.httpRequest('GET', '', requestUrl)
     let rawResult = JSON.parse(raw.body)
+    // this is a slightly gross way to enable testing. Since the bulk of this class is really about building the right URL
+    rawResult.requestUrl = requestUrl
     return rawResult
   }
-  
+
+  /**
+   * Returns details for the specified item.
+   * See https://developer.ebay.com/api-docs/buy/browse/resources/item/methods/getItem
+   * @param itemId The eBay identifier of an item
+   * @param fieldGroups Specifies the fields to return. Can be `'PRODUCT'` or `'COMPACT'`.
+   */
+  public async getItem (itemId: string, fieldGroups: Array<string> = []): Promise<Item> {
+    if (!itemId) {
+      throw new Error('itemId must be specified')
+    }
+    let requestUrl = this.oauthCredentials.baseURL + `/buy/browse/v1/item/${itemId}`
+    requestUrl = requestUrl + (_.isArray(fieldGroups) && _.size(fieldGroups) ? `?fieldgroups=${fieldGroups.join(',')}` : '')
+    D.debug('getItem requestUrl:', requestUrl)
+    let raw = await this.httpRequest('GET', '', requestUrl)
+    let rawResult = JSON.parse(raw.body)
+    // this is a slightly gross way to enable testing. Since the bulk of this class is really about building the right URL
+    rawResult.requestUrl = requestUrl
+    return rawResult
+  }
+
   private httpGet (path) {
     return this.httpRequest('GET', path)
   }
 
-   /**
+  /**
    * Makes the specified http request to the API
    * @param {*string} httpMethod http method (default: "GET")
    * @param {*string} path http request path (relative to the API base URL)

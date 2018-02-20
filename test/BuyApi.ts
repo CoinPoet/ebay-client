@@ -14,14 +14,18 @@ describe('BuyApi', function () {
   // const EBAY_BASE_URL_PROD = 'https://api.ebay.com'
   const EBAY_BASE_URL_SANDBOX = 'https://api.sandbox.ebay.com'
 
-  let API
+  let API: BuyApi
+
+  function newBuyApi() {
+    const ebayEnvironment = require('../data/private/ebay-oauth.json')
+    ebayEnvironment['baseURL'] = EBAY_BASE_URL_SANDBOX
+    return new BuyApi(ebayEnvironment, '5338237258')
+  }
 
   beforeEach(function () {
     // runs before each test in this block
     BuyApi._mockResponseStack = []
-    const ebayEnvironment = require('../data/private/ebay-oauth.json')
-    ebayEnvironment['baseURL'] = EBAY_BASE_URL_SANDBOX
-    API = new BuyApi(ebayEnvironment, '5338237258')
+    API = newBuyApi()
   })
 
   function pushAuthorizationMockResponse () {
@@ -148,7 +152,7 @@ describe('BuyApi', function () {
   })
 
   // only skipping because they're slow and pounding ebay's sandbox.
-  describe.skip('eBay live sandbox tests', function () {
+  describe('eBay live sandbox tests', function () {
     // Basically just don't push any mock responses, and it will run against eBay's sandbox:
     describe('search', function () {
       it('should return results', async function () {
@@ -187,6 +191,41 @@ describe('BuyApi', function () {
           expect(item.itemAffiliateWebUrl).to.be.not.null
           D.debug(`Found item ${item.title} with buying options ${item.buyingOptions}, affiliateHref: ${item.itemAffiliateWebUrl}`)
         }
+      })
+    })
+
+    describe('getItem', function () {
+      let testItemID
+      before(async function () {
+        // get one testItemID for the tests below
+        let page = await newBuyApi().searchPage({ limit: 1, offset: 0, category_ids: [27386] })
+        testItemID = page.itemSummaries[0].itemId
+      })
+      
+      describe('should return an item', function () {
+        it('with default fieldGroup', async function () {
+          let item = await API.getItem(testItemID)
+          expect(item).to.not.be.null
+          
+        })
+        it('with PRODUCT fieldGroups', async function () {
+          let item = await API.getItem(testItemID, ['PRODUCT'])
+          expect(item).to.not.be.null
+          // this fields pretty gross, but is actually the bulk of the work in that class is around building the right URL:
+          expect(item).to.have.property('requestUrl', 'https://api.sandbox.ebay.com/buy/browse/v1/item/v1|110224337049|0?fieldgroups=PRODUCT')
+          
+        })
+        it('with COMPACT fieldGroups', async function () {
+          let item = await API.getItem(testItemID, ['COMPACT'])
+          expect(item).to.not.be.null
+          expect(item).to.have.property('requestUrl', 'https://api.sandbox.ebay.com/buy/browse/v1/item/v1|110224337049|0?fieldgroups=COMPACT')         
+        })
+
+        it('with COMPACT+PRODUCT fieldGroups', async function () {
+          let item = await API.getItem(testItemID, ['COMPACT', 'PRODUCT'])
+          expect(item).to.not.be.null
+          expect(item).to.have.property('requestUrl', 'https://api.sandbox.ebay.com/buy/browse/v1/item/v1|110224337049|0?fieldgroups=COMPACT,PRODUCT')         
+        })
       })
     })
   })
