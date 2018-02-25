@@ -139,20 +139,61 @@ describe('BuyApi', function () {
       }
       expect(itemCount).to.equal(101)
     })
-
-    it.skip('should fail sometimes. right?', function () {
-      throw new Error('todo')
-    })
   })
 
   describe('searchPage', function () {
-    it.skip('should return results', function () {
-      throw new Error("todo: write a specific test with mocks for searhPage. I'm sure I'll regret this but at least it is covered since search is using it too.")
+    it('should return page', async function () {
+      BuyApi._mockResponseStack.push(require('./test-data/BuyApi-searchPage-should-return-page.json'))
+      pushAuthorizationMockResponse()
+      
+      const options = {
+        category_ids: [27386]
+      }
+      let page = await API.searchPage(options)
+      expect(page).to.not.be.null
+      expect(page.itemSummaries).to.have.length.greaterThan(0)
+      for (let item of page.itemSummaries) {
+        expect(item).to.have.property('itemAffiliateWebUrl')
+        expect(item.itemAffiliateWebUrl).to.be.not.null
+        D.debug(`Found item ${item.title} with buying options ${item.buyingOptions}, affiliateHref: ${item.itemAffiliateWebUrl}`)
+      }
     })
   })
 
-  // only skipping because they're slow and pounding ebay's sandbox.
-  describe('eBay live sandbox tests', function () {
+  describe('getItem', function () {
+    const testItemID = "v1|110224337049|0"
+
+    it('with default fieldGroups', async function () {
+      BuyApi._mockResponseStack.push(require('./test-data/BuyApi-getItem-with-default-fieldGroups.json'))
+      pushAuthorizationMockResponse()
+
+      let item = await API.getItem(testItemID)
+      expect(item).to.not.be.null
+      // adding and accessing this field pretty gross, but is actually the bulk of the work in that class is around building the right URL:
+      expect(item).to.have.property('requestUrl', 'https://api.sandbox.ebay.com/buy/browse/v1/item/v1|110224337049|0')
+    })
+
+    it('with PRODUCT fieldGroups', async function () {
+      BuyApi._mockResponseStack.push(require('./test-data/BuyApi-getItem-with-PRODUCT-fieldGroups.json'))
+      pushAuthorizationMockResponse()
+
+      let item = await API.getItem(testItemID, ['PRODUCT'])
+      expect(item).to.not.be.null
+      expect(item).to.have.property('requestUrl', 'https://api.sandbox.ebay.com/buy/browse/v1/item/v1|110224337049|0?fieldgroups=PRODUCT')
+    })
+
+    it('with COMPACT fieldGroups', async function () {
+      BuyApi._mockResponseStack.push(require('./test-data/BuyApi-getItem-with-COMPACT-fieldGroups.json'))
+      pushAuthorizationMockResponse()
+
+      let item = await API.getItem(testItemID, ['COMPACT'])
+      expect(item).to.not.be.null
+      expect(item).to.have.property('requestUrl', 'https://api.sandbox.ebay.com/buy/browse/v1/item/v1|110224337049|0?fieldgroups=COMPACT')         
+    })
+  })
+
+  // skipping because they're slow and pounding ebay's sandbox.
+  describe.skip('eBay live sandbox tests', function () {
     // Basically just don't push any mock responses, and it will run against eBay's sandbox:
     describe('search', function () {
       it('should return results', async function () {
@@ -177,7 +218,7 @@ describe('BuyApi', function () {
     })
 
     describe('searchPage', function () {
-      it('should return a page', async function () {
+      it('should return page', async function () {
         this.timeout(30000)
         let itemCount = 0
         const options = {
@@ -206,14 +247,12 @@ describe('BuyApi', function () {
         it('with default fieldGroup', async function () {
           let item = await API.getItem(testItemID)
           expect(item).to.not.be.null
-          
         })
         it('with PRODUCT fieldGroups', async function () {
           let item = await API.getItem(testItemID, ['PRODUCT'])
           expect(item).to.not.be.null
           // this fields pretty gross, but is actually the bulk of the work in that class is around building the right URL:
           expect(item).to.have.property('requestUrl', 'https://api.sandbox.ebay.com/buy/browse/v1/item/v1|110224337049|0?fieldgroups=PRODUCT')
-          
         })
         it('with COMPACT fieldGroups', async function () {
           let item = await API.getItem(testItemID, ['COMPACT'])

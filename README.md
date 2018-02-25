@@ -1,12 +1,38 @@
-Client for the eBay [RESTful APIs](https://developer.ebay.com/api-docs/static/ebay-rest-landing.html), especially the Browse APIs (part of the [buy API](https://go.developer.ebay.com/api-documentation#buy)).
+# coinpoet-ebay-client
+[![npm version](https://badge.fury.io/js/coinpoet-ebay-client.svg)](https://badge.fury.io/js/coinpoet-ebay-client)
+[![license](https://img.shields.io/npm/l/coinpoet-ebay-client.svg)](https://www.npmjs.com/package/coinpoet-ebay-client)
+[![Build Status](https://travis-ci.org/activescott/coinpoet-ebay-client.svg?branch=master)](https://travis-ci.org/activescott/serverless-http-invoker)
+[![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
-# Implementation Notes / Horror Stories
-- Using typescript because it has support for async generators and they're awesome. 
-  - Not that anything else supports them. In hindsight this was a mistake until node v10. Webpack is fragile and complex magic and typescript's module emitting options + webpack + mocha+ts-node is a terrible waste of time. I would rather have just written pure ES6 and dealt with a manual iteration of some kind instead.
-  - Note to self; I never regretted writing pure ES6 (even when transpiling is required) and always regret writing TypeScript.
-- Using pkg.module because https://github.com/rollup/rollup/wiki/pkg.module
-  - I knew this was idealistic, but it was (combined with the above) terribly complex to get right and eventually disabled it. It seems everything on node assumes CJS (e.g. mocha+ts-node!) and it's terrible added complexity. 
+This is a client for the eBay [RESTful APIs](https://developer.ebay.com/api-docs/static/ebay-rest-landing.html), especially the [buy API](https://go.developer.ebay.com/api-documentation#buy).
 
-# Todo?
-- lint w/ standard (standard+typescript is a pia though) - https://github.com/blakeembrey/tslint-config-standard ?
-- Maybe use standard fetch API instead of httpRequest lib.
+# Features & Benefits
+* A thin wrapper around the eBay RESTful APIs. No magic here.
+* Full type definitions via TypeScript with documentation from the eBay-provided YAML for intellisense and quick and accurate documentation.
+* Manages tokens with each request.
+* Tests included (these could be better)
+
+
+# Usage
+Install with `yarn add coinpoet-ebay-client`
+
+Then you can use it as follows:
+```
+const config = {
+  "baseURL": "https://api.ebay.com",
+  "clientID": "<your ebay client id from developer.ebay.com>",
+  "clientSecret": "<your ebay secret from developer.ebay.com>",
+  "redirectUrlName": "<your ebay redirect url name from developer.ebay.com>"
+}
+
+const buyApi = new BuyApi(config)
+for await (let item of buyApi.search({ category_ids: [123]})) {
+  console.log(item)
+}
+
+// Alternatively get one page of results at a time (and not depend on async iterators which may not be available for your version of node - check http://node.green/#ES2018-features-Asynchronous-Iterators)
+let pageResult = await buyApi.searchPage({ category_ids: [123], offset, limit })
+```
+
+# Contributing
+Please submit pull requests (with tests passing in the build).

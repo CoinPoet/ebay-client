@@ -1,11 +1,20 @@
 {
   "name": "coinpoet-ebay-client",
   "version": "0.0.1",
-  "description": "Client for the eBay RESTful Buy API.",
-  "main": "dist/cjs/index.js",
-  "types": "dist/cjs/index.d.ts",
-  "author": "Scott Willeke <scott@willeke.com>",
+  "description": "A JavaScript/TypeScript client for the eBay RESTful Buy API.",
+  "author": "Scott Willeke <scott@willeke.com> (http://scott.willeke.com)",
+  "repository": "github:CoinPoet/ebay-client",
+  "bugs": {
+    "url": "https://github.com/CoinPoet/ebay-client/issues"
+  },
+  "homepage": "https://github.com/CoinPoet/ebay-client",
+  "keywords": [
+    "ebay",
+    "typescript"
+  ],
   "license": "MIT",
+  "main": "dist/cjs/index.js",
+  "types": "dist/cjs/index.d.ts", 
   "scripts": {
     "build": "rm -rfd ./dist; tsc",
     "start": "npm run test:live",

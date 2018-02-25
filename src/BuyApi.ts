@@ -229,6 +229,8 @@ export default class BuyApi {
       return BpPromise.resolve(BuyApi._mockResponseStack.pop())
     }
     return BpPromise.fromCallback(cb => request(options, cb), { multiArgs: true }).then(responseValues => {
+      // NOTE: below log line can be used to create mock responses for test files
+      D.debug('\n\n mock response data:', JSON.stringify({ statusCode: responseValues[0].statusCode, body: responseValues[0].body }), '\n\n')
       // request returns an array where the first element is the responseObject and the second is the body (which is also available via response.body). I'm simplifying here.
       return responseValues[0]
     })
