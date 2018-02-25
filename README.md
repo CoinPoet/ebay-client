@@ -1,7 +1,7 @@
 # coinpoet-ebay-client
 [![npm version](https://badge.fury.io/js/coinpoet-ebay-client.svg)](https://badge.fury.io/js/coinpoet-ebay-client)
 [![license](https://img.shields.io/npm/l/coinpoet-ebay-client.svg)](https://www.npmjs.com/package/coinpoet-ebay-client)
-[![Build Status](https://travis-ci.org/coinpoet/ebay-client.svg?branch=master)](https://travis-ci.org/coinpoet/ebay-client)
+[![Build Status](https://travis-ci.org/CoinPoet/ebay-client.svg?branch=master)](https://travis-ci.org/CoinPoet/ebay-client)
 [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
 This is a client for the eBay [RESTful APIs](https://developer.ebay.com/api-docs/static/ebay-rest-landing.html), especially the [buy API](https://go.developer.ebay.com/api-documentation#buy).
