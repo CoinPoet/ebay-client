@@ -8,12 +8,12 @@ import { ItemSummary, SearchPagedCollection, Item } from './EbayTypes'
 const D = new Diag('BuyApi'); // <- NOTE rare case where semicolon is necessary for TSC
 
 // Below because https://stackoverflow.com/questions/43694281/ts2318-cannot-find-global-type-asynciterableiterator-async-generator/43694282#43694282
-(<any>Symbol)["asyncIterator"] = (<any>Symbol).asyncIterator || Symbol.for("asyncIterator");
+// (<any>Symbol)["asyncIterator"] = (<any>Symbol).asyncIterator || Symbol.for("asyncIterator");
 
 /**
  * Provides access to the eBay Buy API.
  */
-export default class BuyApi {
+export class BuyApi {
   private oauthCredentials: EbayOAuthCredentials
   private affiliateCampaignId: string
   private tokens: EbayTokens

@@ -1,1 +1,2 @@
-export * from './src/BuyApi'
+export { BuyApi } from './src/BuyApi'
+export * from './src/EbayTypes'

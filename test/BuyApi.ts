@@ -1,5 +1,5 @@
 import { initChai } from './support/setup'
-import BuyApi from '../src/BuyApi'
+import { BuyApi } from '../src/BuyApi'
 import Diag, { LogLevel } from '../src/shared/Diag'
 import * as _ from 'lodash'
 import { ItemSummary } from '../src/EbayTypes'
